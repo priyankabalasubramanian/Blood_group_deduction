@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Blood Group Detection</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Section -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1>Automated Blood Group Detection Using Image Processing</h1>
+                <h2>AI-Based Medical Image Analysis System</h2>
+            </div>
+            <div class="header-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                </svg>
+            </div>
+        </header>
+
+        <!-- Main Layout -->
+        <main class="dashboard-main">
+            <!-- Left Side: Main Panel with 6 image boxes -->
+            <section class="main-panel">
+                <div class="image-grid">
+                    <!-- Box 1 -->
+                    <div class="image-box card" id="box-input">
+                        <h3>Input Blood Image</h3>
+                        <div class="image-preview">
+                            <img id="img-input" src="" alt="Input Image" style="display:none;">
+                            <div class="placeholder">No Image</div>
+                            <div class="loader" style="display:none;"></div>
+                        </div>
+                    </div>
+                    <!-- Box 2 -->
+                    <div class="image-box card" id="box-red">
+                        <h3>Red Color Plane</h3>
+                        <div class="image-preview">
+                            <img id="img-red" src="" alt="Red Plane" style="display:none;">
+                            <div class="placeholder">Waiting...</div>
+                            <div class="loader" style="display:none;"></div>
+                        </div>
+                    </div>
+                    <!-- Box 3 -->
+                    <div class="image-box card" id="box-green">
+                        <h3>Green Color Plane</h3>
+                        <div class="image-preview">
+                            <img id="img-green" src="" alt="Green Plane" style="display:none;">
+                            <div class="placeholder">Waiting...</div>
+                            <div class="loader" style="display:none;"></div>
+                        </div>
+                    </div>
+                    <!-- Box 4 -->
+                    <div class="image-box card" id="box-threshold">
+                        <h3>Threshold Image</h3>
+                        <div class="image-preview">
+                            <img id="img-threshold" src="" alt="Threshold Image" style="display:none;">
+                            <div class="placeholder">Waiting...</div>
+                            <div class="loader" style="display:none;"></div>
+                        </div>
+                    </div>
+                    <!-- Box 5 -->
+                    <div class="image-box card" id="box-morphology">
+                        <h3>Morphological Image</h3>
+                        <div class="image-preview">
+                            <img id="img-morphology" src="" alt="Morphological Image" style="display:none;">
+                            <div class="placeholder">Waiting...</div>
+                            <div class="loader" style="display:none;"></div>
+                        </div>
+                    </div>
+                    <!-- Box 6 -->
+                    <div class="image-box card" id="box-hsi">
+                        <h3>HSI/HSL Plane</h3>
+                        <div class="image-preview">
+                            <img id="img-hsi" src="" alt="HSI Plane" style="display:none;">
+                            <div class="placeholder">Waiting...</div>
+                            <div class="loader" style="display:none;"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Side: Vertical Menu -->
+            <aside class="side-menu card">
+                <div class="menu-title">Control Panel</div>
+                <div class="button-group">
+                    <label for="file-upload" class="btn btn-primary" title="Upload a blood sample image">
+                        Browse Blood Image
+                        <input type="file" id="file-upload" accept="image/*" style="display:none;">
+                    </label>
+                    <button id="btn-color" class="btn" disabled title="Extract Red and Green color planes">Color Plane Extraction</button>
+                    <button id="btn-threshold" class="btn" disabled title="Apply binary thresholding">Thresholding</button>
+                    <button id="btn-morphology" class="btn" disabled title="Apply morphological operations">Morphology</button>
+                    <button id="btn-hsi" class="btn" disabled title="Convert to HSI color space">HSI Plane Conversion</button>
+                    <button id="btn-detect" class="btn btn-action" disabled title="Run final detection logic">Detection</button>
+                    <div class="divider"></div>
+                    <button id="btn-reset" class="btn btn-secondary" title="Reset all fields and images">Reset</button>
+                    <button id="btn-exit" class="btn btn-danger" title="Exit application">Exit</button>
+                </div>
+            </aside>
+        </main>
+
+        <!-- Bottom Section -->
+        <footer class="dashboard-footer">
+            <div class="results-panel card">
+                <div class="detection-result">
+                    <h3>Detected Blood Group</h3>
+                    <div class="blood-group-box">
+                        <span id="blood-group-val">--</span>
+                    </div>
+                </div>
+                <div class="parameters-grid">
+                    <div class="param-item">
+                        <span class="param-label">Contrast</span>
+                        <span class="param-value" id="param-contrast">--</span>
+                    </div>
+                    <div class="param-item">
+                        <span class="param-label">Mean</span>
+                        <span class="param-value" id="param-mean">--</span>
+                    </div>
+                    <div class="param-item">
+                        <span class="param-label">RMS</span>
+                        <span class="param-value" id="param-rms">--</span>
+                    </div>
+                    <div class="param-item">
+                        <span class="param-label">Correlation</span>
+                        <span class="param-value" id="param-correlation">--</span>
+                    </div>
+                    <div class="param-item highlight">
+                        <span class="param-label">Execution Time</span>
+                        <span class="param-value" id="param-time">--</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Notification Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
